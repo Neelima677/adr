@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-icon">🔐</div>
+        <h1>Login</h1>
+      </div>
+
+      <p class="auth-subtitle">Sign in to access the dashboard</p>
+
+      <div class="auth-form">
+        <input type="text" id="loginUsername" placeholder="Username" />
+        <input type="password" id="loginPassword" placeholder="Password" />
+
+        <button class="auth-btn" id="loginBtn">Login</button>
+
+        <p id="loginMessage" class="auth-message"></p>
+
+        <div class="auth-footer">
+          <p>Don’t have an account?</p>
+          <a href="register.html">Create account</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+    "train_raw_shape": [
+        161297,
+        7
+    ],
+    "test_raw_shape": [
+        53766,
+        7
+    ],
+    "balanced_train_shape": [
+        45000,
+        8
+    ],
+    "validation_metrics": {
+        "sentiment_accuracy": 0.7970241785492871,
+        "sentiment_precision": 0.687810734072564,
+        "sentiment_recall": 0.7522585895084156,
+        "sentiment_f1": 0.6982074669517863,
+        "adr_accuracy": 0.9926017772266997,
+        "adr_precision": 0.9965055329062318,
+        "adr_recall": 0.9886907710087502,
+        "adr_f1": 0.9925827704802552,
+        "adr_auc": 0.9982058976817056
+    },
+    "top_adr_symptoms": {
+        "anxiety": 16552,
+        "depression": 13020,
+        "acne": 11357,
+        "nausea": 10811,
+        "cramps": 9506,
+        "weight gain": 7806,
+        "headache": 4925,
+        "insomnia": 4015,
+        "diarrhea": 3772,
+        "burning": 3053,
+        "fatigue": 3014,
+        "constipation": 2961,
+        "dizziness": 2898,
+        "dry mouth": 2733,
+        "migraine": 2597
+    },
+    "sample_user_prediction": {
+        "drug_name": "Klonopin",
+        "review_text": "\u201cThis medication helped me sleep, but after some time it became less effective. It works sometimes but not always.\u201d",
+        "clean_review": "this medication helped me sleep, but after some time it became less effective. it works sometimes but not always.",
+        "predicted_sentiment": "Neutral",
+        "sentiment_probabilities": {
+            "negative": 0.024311020970344543,
+            "neutral": 0.9465703964233398,
+            "positive": 0.029118573293089867
+        },
+        "adr_present_model": 0,
+        "adr_probability": 0.004938202910125256,
+        "adr_present_rule_based": 0,
+        "detected_symptoms": []
+    }
+}

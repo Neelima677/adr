@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account</title>
+  <link rel="stylesheet" href="auth.css" />
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-icon">📝</div>
+        <h1>Create Account</h1>
+      </div>
+
+      <p class="auth-subtitle">Register to continue</p>
+
+      <div class="auth-form">
+        <input type="text" id="registerUsername" placeholder="Username" />
+        <input type="email" id="registerEmail" placeholder="Email" />
+        <input type="password" id="registerPassword" placeholder="Password" />
+        <input type="password" id="registerConfirmPassword" placeholder="Confirm Password" />
+
+        <button class="auth-btn" id="registerBtn">Register</button>
+
+        <p id="registerMessage" class="auth-message"></p>
+
+        <div class="auth-footer">
+          <p>Already have an account?</p>
+          <a href="login.html">Go to Login</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ADR Review Intelligence Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">+</div>
+        <div>
+          <h2>ADR Insight</h2>
+          <p>Clinical Review Intelligence</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-page="homePage">Home</button>
+        <button class="nav-btn" id="openDashboardBtn">Dashboard</button>
+        <button class="nav-btn" data-page="predictionPage">Prediction</button>
+        <button class="nav-btn" data-page="historyPage">History</button>
+      </nav>
+
+      <button class="nav-btn logout-sidebar" id="logoutBtnSidebar">Logout</button>
+
+      <div class="sidebar-status">
+        <h4>Backend Status</h4>
+        <p id="apiStatus">Checking backend...</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <!-- HOME PAGE -->
+      <section id="homePage" class="page-section active-page">
+        <header class="page-header">
+          <div>
+            <h1>ADR Review Intelligence Dashboard</h1>
+            <p>
+              Professional platform for analyzing drug reviews, predicting sentiment,
+              and identifying possible adverse drug reaction signals.
+            </p>
+          </div>
+
+          <div class="header-actions">
+            <button class="secondary-btn" id="goPredictionBtn">Go to Prediction</button>
+            <button class="primary-btn" id="goDashboardBtn">Open Dashboard</button>
+          </div>
+        </header>
+
+        <div class="hero-card">
+          <h2>Welcome</h2>
+          <p>
+            This system helps analyze patient review text using an AI-based model.
+            It predicts sentiment, detects ADR-related signals, highlights symptoms,
+            and provides a clear clinical-style output.
+          </p>
+
+          <div class="hero-actions">
+            <button class="primary-btn" id="homeAnalyzeBtn">Analyze Review</button>
+            <button class="secondary-btn" id="homeHistoryBtn">View History</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PREDICTION PAGE -->
+      <section id="predictionPage" class="page-section">
+        <header class="page-header">
+          <div>
+            <h1>Drug Review Prediction</h1>
+            <p>Enter a drug name and review text to generate prediction output.</p>
+          </div>
+
+          <div class="header-actions">
+            <button class="secondary-btn back-btn" data-back="homePage">Back</button>
+            <button class="secondary-btn" id="clearBtn">Reset</button>
+            <button class="primary-btn" id="sampleBtn">Use Sample</button>
+          </div>
+        </header>
+
+        <div class="prediction-layout">
+          <div class="card input-card">
+            <h2>Review Input</h2>
+
+            <label for="drug_name">Drug Name</label>
+            <input type="text" id="drug_name" placeholder="Enter drug name" />
+
+            <label for="review_text">Review Text</label>
+            <textarea
+              id="review_text"
+              rows="8"
+              placeholder="Enter patient review here"
+            ></textarea>
+
+            <div class="form-actions">
+              <button class="primary-btn" id="analyzeBtn">Analyze Review</button>
+              <button class="secondary-btn" id="predictionBackBtn">Back</button>
+              <span id="loading" class="loading hidden">Processing request...</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="resultSection" class="results-section hidden">
+          <h2 class="section-heading">Prediction Output</h2>
+
+          <div class="results-grid">
+            <div class="card summary-card">
+              <h3>Result Summary</h3>
+
+              <div class="summary-row">
+                <span>Drug Name</span>
+                <strong id="drugOut">-</strong>
+              </div>
+
+              <div class="summary-row">
+                <span>Predicted Sentiment</span>
+                <strong id="sentimentOut" class="badge neutral-badge">-</strong>
+              </div>
+
+              <div class="summary-row">
+                <span>ADR Prediction</span>
+                <strong id="adrOut" class="badge neutral-badge">-</strong>
+              </div>
+
+              <div class="summary-row">
+                <span>ADR Probability</span>
+                <strong id="adrProbOut">-</strong>
+              </div>
+
+              <div class="summary-row">
+                <span>Rule-Based ADR</span>
+                <strong id="ruleAdrOut">-</strong>
+              </div>
+            </div>
+
+            <div class="card risk-card">
+              <h3>Risk Assessment</h3>
+              <div id="riskBadge" class="risk-badge low-risk">Low Risk</div>
+              <p id="riskText">Risk level will appear here after analysis.</p>
+            </div>
+
+            <div class="card symptoms-card">
+              <h3>Detected Symptoms</h3>
+              <div id="symptomsOut" class="symptom-chip-box">
+                <span class="empty-text">No symptoms detected</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card probability-card">
+            <h3>Sentiment Probability Distribution</h3>
+
+            <div class="prob-row">
+              <span>Negative</span>
+              <div class="bar-track"><div id="negBar" class="bar-fill"></div></div>
+              <span id="negVal">0%</span>
+            </div>
+
+            <div class="prob-row">
+              <span>Neutral</span>
+              <div class="bar-track"><div id="neuBar" class="bar-fill"></div></div>
+              <span id="neuVal">0%</span>
+            </div>
+
+            <div class="prob-row">
+              <span>Positive</span>
+              <div class="bar-track"><div id="posBar" class="bar-fill"></div></div>
+              <span id="posVal">0%</span>
+            </div>
+          </div>
+
+          <div class="dual-grid">
+            <div class="card recommendation-card">
+              <h3>Clinical Recommendation</h3>
+              <p id="recommendationText">
+                Recommendation will appear here after analysis.
+              </p>
+            </div>
+
+            <div class="card cleaned-card">
+              <h3>Processed Review Text</h3>
+              <p id="cleanReviewOut">-</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTORY PAGE -->
+      <section id="historyPage" class="page-section">
+        <header class="page-header">
+          <div>
+            <h1>History</h1>
+            <p>Recent analyses performed in this session.</p>
+          </div>
+
+          <div class="header-actions">
+            <button class="secondary-btn back-btn" data-back="homePage">Back</button>
+          </div>
+        </header>
+
+        <div class="card history-card">
+          <h2>Recent Predictions</h2>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Drug Name</th>
+                  <th>Sentiment</th>
+                  <th>ADR</th>
+                  <th>Risk</th>
+                  <th>Symptoms</th>
+                </tr>
+              </thead>
+              <tbody id="historyTableBody">
+                <tr>
+                  <td colspan="6" class="empty-row">No analyses yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

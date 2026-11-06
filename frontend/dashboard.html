@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | ADR Insight</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-icon">+</div>
+        <div>
+          <h2>ADR Insight</h2>
+          <p>Clinical Review Intelligence</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-btn" href="index.html">Prediction</a>
+        <a class="nav-btn active" href="dashboard.html">Dashboard</a>
+      </nav>
+
+      <div class="sidebar-status">
+        <h4>System Status</h4>
+        <p id="dashboardStatus">Analytics ready</p>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <section class="page-section active-page">
+        <header class="page-header">
+          <div>
+            <h1>ADR Analytics Dashboard</h1>
+            <p>
+              Professional analytics view for sentiment trends, ADR distribution,
+              symptom patterns, and recent review intelligence.
+            </p>
+          </div>
+
+          <div class="header-actions">
+            <a href="index.html" class="secondary-btn">Go to Prediction</a>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
+          </div>
+        </header>
+
+        <div class="dashboard-banner-card">
+          <div>
+            <h2>Review Intelligence Overview</h2>
+            <p>
+              Monitor total analyses, ADR alerts, sentiment flow, risk signals,
+              and top symptom trends from the current session.
+            </p>
+          </div>
+
+          <div class="dashboard-banner-stats">
+            <div class="mini-stat-card">
+              <span>Total Reviews</span>
+              <strong id="totalReviews">0</strong>
+            </div>
+            <div class="mini-stat-card">
+              <span>ADR Detected</span>
+              <strong id="adrDetected">0</strong>
+            </div>
+            <div class="mini-stat-card">
+              <span>High Risk</span>
+              <strong id="highRisk">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Positive Reviews</span>
+            <strong class="stat-value" id="positiveCount">0</strong>
+            <p class="stat-desc">Predicted positive sentiment cases.</p>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Neutral Reviews</span>
+            <strong class="stat-value" id="neutralCount">0</strong>
+            <p class="stat-desc">Predicted neutral sentiment cases.</p>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Negative Reviews</span>
+            <strong class="stat-value" id="negativeCount">0</strong>
+            <p class="stat-desc">Predicted negative sentiment cases.</p>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Average ADR Probability</span>
+            <strong class="stat-value" id="avgAdrProb">0%</strong>
+            <p class="stat-desc">Mean ADR probability across reviews.</p>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="card chart-card">
+            <h3>Sentiment Distribution</h3>
+            <canvas id="sentimentChart"></canvas>
+          </div>
+
+          <div class="card chart-card">
+            <h3>ADR Overview</h3>
+            <canvas id="adrChart"></canvas>
+          </div>
+
+          <div class="card chart-card">
+            <h3>Risk Level Summary</h3>
+            <canvas id="riskChart"></canvas>
+          </div>
+
+          <div class="card chart-card">
+            <h3>Top Detected Symptoms</h3>
+            <canvas id="symptomChart"></canvas>
+          </div>
+        </div>
+
+        <div class="dashboard-main-grid">
+          <div class="card dashboard-card">
+            <h3>Latest Review Insights</h3>
+            <div class="dashboard-insights">
+              <div class="insight-item">
+                <span class="insight-title">Latest Drug</span>
+                <strong id="latestDrug">-</strong>
+              </div>
+              <div class="insight-item">
+                <span class="insight-title">Latest Sentiment</span>
+                <strong id="latestSentiment">-</strong>
+              </div>
+              <div class="insight-item">
+                <span class="insight-title">Latest ADR Status</span>
+                <strong id="latestAdr">-</strong>
+              </div>
+              <div class="insight-item">
+                <span class="insight-title">Latest Risk</span>
+                <strong id="latestRisk">-</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="card dashboard-card">
+            <h3>Detected Symptoms</h3>
+            <div id="topSymptomsBox" class="symptom-chip-box">
+              <span class="empty-text">No symptoms available</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card dashboard-table-card">
+          <div class="section-top">
+            <div>
+              <h3>Recent Predictions</h3>
+              <p>Recent review analysis from the current session.</p>
+            </div>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Drug Name</th>
+                  <th>Sentiment</th>
+                  <th>ADR</th>
+                  <th>Risk</th>
+                  <th>Symptoms</th>
+                </tr>
+              </thead>
+              <tbody id="recentPredictionsTable">
+                <tr>
+                  <td colspan="6" class="empty-row">No analyses yet</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const user = localStorage.getItem("user");
+    if (!user) {
+      window.location.href = "login.html";
+    }
+
+    const historyData = JSON.parse(localStorage.getItem("predictionHistory") || "[]");
+
+    const totalReviews = historyData.length;
+    const positive = historyData.filter(item => (item.sentiment || "").toLowerCase() === "positive").length;
+    const neutral = historyData.filter(item => (item.sentiment || "").toLowerCase() === "neutral").length;
+    const negative = historyData.filter(item => (item.sentiment || "").toLowerCase() === "negative").length;
+    const adrDetected = historyData.filter(item => item.adrPresent === 1 || item.adrPresent === true).length;
+
+    const lowRisk = historyData.filter(item => (item.risk || "").toLowerCase() === "low risk").length;
+    const moderateRisk = historyData.filter(item => (item.risk || "").toLowerCase() === "moderate risk").length;
+    const highRiskCount = historyData.filter(item => (item.risk || "").toLowerCase() === "high risk").length;
+
+    const avgProb = totalReviews
+      ? (historyData.reduce((sum, item) => sum + (parseFloat(item.adrProbability) || 0), 0) / totalReviews) * 100
+      : 0;
+
+    document.getElementById("totalReviews").textContent = totalReviews;
+    document.getElementById("adrDetected").textContent = adrDetected;
+    document.getElementById("highRisk").textContent = highRiskCount;
+
+    document.getElementById("positiveCount").textContent = positive;
+    document.getElementById("neutralCount").textContent = neutral;
+    document.getElementById("negativeCount").textContent = negative;
+    document.getElementById("avgAdrProb").textContent = avgProb.toFixed(1) + "%";
+
+    if (historyData.length > 0) {
+      const latest = historyData[historyData.length - 1];
+      document.getElementById("latestDrug").textContent = latest.drugName || "-";
+      document.getElementById("latestSentiment").textContent = latest.sentiment || "-";
+      document.getElementById("latestAdr").textContent = latest.adrLabel || "-";
+      document.getElementById("latestRisk").textContent = latest.risk || "-";
+    }
+
+    const symptomCount = {};
+    historyData.forEach(item => {
+      (item.symptoms || []).forEach(symptom => {
+        symptomCount[symptom] = (symptomCount[symptom] || 0) + 1;
+      });
+    });
+
+    const symptomEntries = Object.entries(symptomCount).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const symptomLabels = symptomEntries.map(item => item[0]);
+    const symptomValues = symptomEntries.map(item => item[1]);
+
+    const symptomsBox = document.getElementById("topSymptomsBox");
+    if (symptomLabels.length > 0) {
+      symptomsBox.innerHTML = symptomLabels.map(s => `<span class="symptom-chip">${s}</span>`).join("");
+    }
+
+    const recentTable = document.getElementById("recentPredictionsTable");
+    if (historyData.length > 0) {
+      recentTable.innerHTML = historyData.slice().reverse().map((item, index) => `
+        <tr>
+          <td>${index + 1}</td>
+          <td>${item.drugName || "-"}</td>
+          <td>${item.sentiment || "-"}</td>
+          <td>${item.adrLabel || "-"}</td>
+          <td>${item.risk || "-"}</td>
+          <td>${(item.symptoms || []).join(", ") || "-"}</td>
+        </tr>
+      `).join("");
+    }
+
+    new Chart(document.getElementById("sentimentChart"), {
+      type: "doughnut",
+      data: {
+        labels: ["Positive", "Neutral", "Negative"],
+        datasets: [{
+          data: [positive, neutral, negative]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "bottom" } }
+      }
+    });
+
+    new Chart(document.getElementById("adrChart"), {
+      type: "bar",
+      data: {
+        labels: ["ADR Present", "No ADR"],
+        datasets: [{
+          label: "Count",
+          data: [adrDetected, totalReviews - adrDetected]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    new Chart(document.getElementById("riskChart"), {
+      type: "pie",
+      data: {
+        labels: ["Low Risk", "Moderate Risk", "High Risk"],
+        datasets: [{
+          data: [lowRisk, moderateRisk, highRiskCount]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: "bottom" } }
+      }
+    });
+
+    new Chart(document.getElementById("symptomChart"), {
+      type: "bar",
+      data: {
+        labels: symptomLabels.length ? symptomLabels : ["No Data"],
+        datasets: [{
+          label: "Frequency",
+          data: symptomValues.length ? symptomValues : [0]
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("user");
+      window.location.href = "login.html";
+    });
+  </script>
+</body>
+</html> 
